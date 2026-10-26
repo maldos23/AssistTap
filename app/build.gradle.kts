@@ -27,6 +27,8 @@ android {
         abortOnError = true
         // Version bumps are handled by Dependabot; targetSdk 35 is a project requirement.
         disable += setOf("OldTargetApi", "GradleDependency", "AndroidGradlePluginVersion", "NewerVersionAvailable")
+        // aapt2 needs the adaptive icon in mipmap-anydpi-v26 even with minSdk 26.
+        disable += "ObsoleteSdkInt"
     }
 }
 
