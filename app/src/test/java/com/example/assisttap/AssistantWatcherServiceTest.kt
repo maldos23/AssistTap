@@ -4,7 +4,7 @@ import android.accessibilityservice.AccessibilityService
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.content.pm.ResolveInfo
-import android.view.accessibility.AccessibilityNodeInfo
+import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityWindowInfo
 import androidx.test.core.app.ApplicationProvider
 import org.junit.After
@@ -19,6 +19,8 @@ import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.Shadows.shadowOf
 import org.robolectric.shadows.ShadowSystemClock
+import org.robolectric.util.ReflectionHelpers
+import org.robolectric.util.ReflectionHelpers.ClassParameter
 import java.time.Duration
 
 @RunWith(RobolectricTestRunner::class)
@@ -46,9 +48,21 @@ class AssistantWatcherServiceTest {
         service.onUnbind(null)
     }
 
-    private fun showWindowOf(packageName: String) {
+    /** Simulates [packageName] opening window [id]: the state-change event, then the window being on screen. */
+    private fun showWindowOf(
+        packageName: String,
+        id: Int = 7,
+    ) {
+        val event = AccessibilityEvent.obtain(AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED)
+        event.packageName = packageName
+        ReflectionHelpers.callInstanceMethod<Unit>(
+            event,
+            "setWindowId",
+            ClassParameter.from(Int::class.javaPrimitiveType, id),
+        )
+        service.onAccessibilityEvent(event)
         val window = AccessibilityWindowInfo.obtain()
-        shadowOf(window).setRoot(AccessibilityNodeInfo.obtain().apply { this.packageName = packageName })
+        shadowOf(window).setId(id)
         shadowOf(service).setWindows(listOf(window))
     }
 
@@ -64,6 +78,31 @@ class AssistantWatcherServiceTest {
 
         assertTrue(service.isShowing(ASSISTANT))
         assertFalse(service.isShowing("com.other"))
+    }
+
+    @Test
+    fun `forgets windows that are gone`() {
+        showWindowOf(ASSISTANT)
+        shadowOf(service).setWindows(emptyList())
+        assertFalse(service.isShowing(ASSISTANT))
+
+        // Same id reused by a window it never saw an event for: not the assistant.
+        val reused = AccessibilityWindowInfo.obtain()
+        shadowOf(reused).setId(7)
+        shadowOf(service).setWindows(listOf(reused))
+        assertFalse(service.isShowing(ASSISTANT))
+    }
+
+    @Test
+    fun `ignores events that are not window state changes`() {
+        service.onAccessibilityEvent(null)
+        service.onAccessibilityEvent(
+            AccessibilityEvent.obtain(AccessibilityEvent.TYPE_VIEW_CLICKED).apply {
+                packageName =
+                    ASSISTANT
+            },
+        )
+        assertFalse(service.isShowing(ASSISTANT))
     }
 
     @Test

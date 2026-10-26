@@ -21,11 +21,14 @@ class AssistantToggle(
 
     /** Calibration knobs and sentinel values. */
     companion object {
-        /** Without the watcher: how long after opening a second launch still means "close". */
-        const val DEFAULT_WINDOW_MILLIS = 10_000L
+        /**
+         * Without the watcher: how long after opening a second launch still means "close". Kept well under the ~10 s an
+         * unattended overlay stays up, so a press after the assistant closed by itself opens it instead of going home.
+         */
+        const val DEFAULT_WINDOW_MILLIS = 5_000L
 
-        /** With the watcher: how long the assistant may take to appear before a launch opens it again. */
-        const val OPENING_GRACE_MILLIS = 3_000L
+        /** With the watcher: a double-tap debounce while the assistant appears; later presses are never swallowed. */
+        const val OPENING_GRACE_MILLIS = 1_500L
 
         /** Marks "AssistTap has not opened the assistant" (or it was already closed). */
         const val NEVER = -1L
