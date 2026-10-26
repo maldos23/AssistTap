@@ -20,4 +20,13 @@ class IntentCandidatesTest {
         assertEquals(listOf(null, null, IntentCandidates.GOOGLE_APP_PACKAGE), candidates.map { it.`package` })
         assertEquals(setOf(Intent.CATEGORY_LAUNCHER), candidates[2].categories)
     }
+
+    @Test
+    fun `home intent targets the home screen in a new task`() {
+        val home = IntentCandidates.home()
+
+        assertEquals(Intent.ACTION_MAIN, home.action)
+        assertEquals(setOf(Intent.CATEGORY_HOME), home.categories)
+        assertEquals(Intent.FLAG_ACTIVITY_NEW_TASK, home.flags and Intent.FLAG_ACTIVITY_NEW_TASK)
+    }
 }

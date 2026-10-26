@@ -12,6 +12,7 @@ Android intents. AssistTap is an installable app (listed as **"Assistant"**) tha
 "open app" button becomes a voice-assistant button.
 
 - No UI, no flicker, not shown in recents.
+- Press again to close the assistant instead of starting a second request (see below).
 - No permissions, no network, no analytics, no runtime dependencies.
 - Release APK is about 20 KB.
 
@@ -41,6 +42,24 @@ The exact menu names vary by head unit; the flow is the same everywhere.
 
 On a phone, the same works with any button-remapping app that supports "launch app".
 
+## Press again to close
+
+Launching AssistTap while the assistant is open closes it instead of starting a new request. Android does not let
+normal apps see other apps' windows, so there are two modes:
+
+| Mode | Setup | How it decides | How it closes |
+|---|---|---|---|
+| **Exact (recommended)** | Enable the AssistTap service once (below) | Checks whether the assistant is actually on screen | Back, so you return to the app you were in (e.g. Maps) |
+| **Time-based (default)** | None | A launch within 10 s of opening it means "close" | Goes to the home screen |
+
+To enable exact mode: *Settings → Accessibility → Installed apps (or Downloaded apps) → AssistTap: close assistant on
+second press → On*. On Android 13+, if the switch is greyed out, first open *Settings → Apps → Assistant → ⋮ → Allow
+restricted settings*. The service reads only the package name of each on-screen window; it reads no content and sends
+nothing anywhere.
+
+In exact mode, a second press within 3 s of opening is ignored while the assistant is still appearing, so it never
+starts twice.
+
 ## Troubleshooting
 
 | Symptom | Fix |
@@ -48,6 +67,8 @@ On a phone, the same works with any button-remapping app that supports "launch a
 | Toast "No assistant found" | Install or enable the Google app, then set a default assistant in *Settings → Apps → Default apps → Digital assistant app*. |
 | Gemini opens instead of Google Assistant | Expected: `ACTION_VOICE_COMMAND` opens whichever assistant is the device default. Change it in the default-apps settings. |
 | Nothing happens on a head unit | Some head units block apps without visible UI. Open an issue with your unit model; see "Known caveats". |
+| Second press goes to the home screen instead of back to my app | Enable exact mode (see "Press again to close"). |
+| Second press does not close the assistant | In time-based mode only presses within 10 s close it, and some assistant overlays ignore the home screen; enable exact mode. |
 | The app is missing from the head unit's app picker | Reboot the head unit after installing; some pickers cache the app list. |
 
 ## Known caveats

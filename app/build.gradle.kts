@@ -102,14 +102,18 @@ tasks.withType<Test>().configureEach {
     }
 }
 
-// Coverage gate: >= 80 % line coverage on the pure resolver logic.
+// Coverage gate: >= 80 % line coverage on the pure decision logic.
 tasks.register<JacocoCoverageVerification>("verifyResolverCoverage") {
     group = "verification"
-    description = "Fails when AssistantIntentResolver/IntentCandidates line coverage is below 80 %."
+    description = "Fails when AssistantIntentResolver/IntentCandidates/AssistantToggle line coverage is below 80 %."
     dependsOn("testDebugUnitTest")
     classDirectories.setFrom(
         fileTree(layout.buildDirectory.dir("intermediates/built_in_kotlinc/debug/compileDebugKotlin/classes")) {
-            include("**/AssistantIntentResolver*.class", "**/IntentCandidates*.class")
+            include(
+                "**/AssistantIntentResolver*.class",
+                "**/IntentCandidates*.class",
+                "**/AssistantToggle*.class",
+            )
         },
     )
     sourceDirectories.setFrom("src/main/java")

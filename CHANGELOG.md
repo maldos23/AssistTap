@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Launching AssistTap while the assistant is open closes it instead of starting a second request.
+- Optional accessibility service for exact detection: closes with Back and returns to the previous app; ignores a
+  second press while the assistant is still appearing.
+- Without the service, a launch within 10 s of opening the assistant closes it by going to the home screen.
+
 ## [1.0.0] - 2026-10-25
 
 ### Added
