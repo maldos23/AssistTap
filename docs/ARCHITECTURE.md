@@ -14,6 +14,8 @@ app/src/main/java/com/example/assisttap/
 | `IntentCandidates` | Returns the ordered candidate intents. No Android services involved. |
 | `IntentResolvable` | One-method interface: "can this intent be handled?". Lets the resolver be tested without a device. |
 | `AssistantIntentResolver` | Returns the first candidate the `IntentResolvable` accepts, or `null`. |
+| `AssistantToggle` | Pure time logic: "did AssistTap open the assistant within the last N ms?". |
+| `AssistantWatcherService` | Optional accessibility service: tells whether the assistant's package has a window on screen and closes it with a global Back. |
 | `LaunchActivity` | Wires `PackageManager` into the resolver, starts the result (or shows a toast) and calls `finish()`. |
 
 ## Fallback chain
@@ -29,6 +31,21 @@ flowchart TD
     D -- no --> T[Toast: No assistant found]
     S --> F[finish]
     T --> F
+```
+
+## Press again to close
+
+```mermaid
+flowchart TD
+    L[Launch] --> W{Watcher service enabled?}
+    W -- yes --> V{Assistant window on screen?}
+    V -- yes --> B[Global Back: close, return to previous app]
+    V -- no --> G{Opened < 3 s ago?}
+    G -- yes --> N[Do nothing: still appearing]
+    G -- no --> O[Open assistant, store time]
+    W -- no --> R{Opened < 10 s ago?}
+    R -- yes --> H[Start HOME: closes the overlay]
+    R -- no --> O
 ```
 
 ## Design decisions
@@ -61,5 +78,18 @@ flowchart TD
   Kotlin version follows AGP.
 - **The coverage gate cannot pass vacuously.** It fails if it finds no classes (e.g. the compiler output path moves,
   as it did with AGP 9) or no execution data.
+- **"Press again to close" needs an accessibility service to be exact.** Measured on an Android 15 emulator: since
+  Android 10, `AudioManager.getActiveRecordingConfigurations()` hides other apps' recordings (the assistant was
+  recording, AssistTap saw 0), and other apps' activities and windows are invisible to normal apps. So the default is a
+  time heuristic, and an opt-in accessibility service gives exact detection.
+- **Closing: Back with the service, HOME without it.** Google shows the assistant either as an activity
+  (`FragmentHostDefaultActivity`) or as a `VoiceInteractionSession` window. A HOME intent closes the first but not the
+  second; a global Back closes both and returns to the previous app. Launching a no-UI activity closes neither.
+  `ACTION_CLOSE_SYSTEM_DIALOGS` is blocked for apps targeting Android 12+.
+- **3 s opening grace in exact mode.** The assistant takes a moment to appear (9-11 s on a software-rendered emulator,
+  about 1-2 s on real hardware); a second press in that gap would otherwise start it twice. Both durations are
+  constants in `AssistantToggle`.
+- **The time is `SystemClock.elapsedRealtime()` in `SharedPreferences`.** It is immune to wall-clock changes; a value
+  from before a reboot is larger than "now" and is ignored.
 - **No splash build flag yet.** The plan lists it as an optional workaround for head units that block invisible apps;
   it will be added when a user reports such a unit.

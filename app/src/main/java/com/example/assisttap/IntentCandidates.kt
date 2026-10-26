@@ -18,4 +18,8 @@ object IntentCandidates {
             Intent(Intent.ACTION_ASSIST),
             Intent(Intent.ACTION_MAIN).addCategory(Intent.CATEGORY_LAUNCHER).setPackage(GOOGLE_APP_PACKAGE),
         )
+
+    /** Returns the home-screen intent, which dismisses an open assistant overlay. */
+    fun home(): Intent =
+        Intent(Intent.ACTION_MAIN).addCategory(Intent.CATEGORY_HOME).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
 }
