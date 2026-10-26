@@ -29,6 +29,7 @@ class AssistantWatcherServiceTest {
 
     @Before
     fun setUp() {
+        RootAssistant.runner = { _, _ -> null }
         val handler =
             ResolveInfo().apply {
                 activityInfo =

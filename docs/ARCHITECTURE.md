@@ -94,6 +94,12 @@ flowchart TD
   each press: a synchronous IPC into every on-screen app on our main thread, which waits up to the accessibility
   timeout when an app is busy and reads as "not showing" when it returns `null`. The service now records each
   window's package from `TYPE_WINDOW_STATE_CHANGED` events and only asks system_server which window ids are live.
+- **Root mode uses `cmd voiceinteraction show/hide`.** It starts a session of the active assistant directly, the path
+  of a hardware assist button: 0.5 s (warm) / 0.9 s (cold) faster than `VOICE_COMMAND` on the emulator, and `hide`
+  closes both assistant variants. Root is confirmed only by `uid=0` from `su -c id`, checked off the main thread (the
+  root manager may prompt) and cached per install time. `dumpsys voiceinteraction` `mShown` is not used as state: it
+  stayed `true` with nothing on screen. Precompiling Google (`cmd package compile -m speed`) and halving animation
+  scales showed no measurable gain on the emulator, so they are not recommended.
 - **`ACTION_VOICE_COMMAND` stays first.** `ACTION_ASSIST` appears faster (0.3-1.1 s vs 1.5-3.5 s on the emulator) but
   opens the Google search app instead of listening.
 - **The time is `SystemClock.elapsedRealtime()` in `SharedPreferences`.** It is immune to wall-clock changes; a value

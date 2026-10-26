@@ -4,4 +4,6 @@
   <string name="no_assistant_found">No assistant found</string>
   <string name="watcher_label">AssistTap: close assistant on second press</string>
   <string name="watcher_description">Lets AssistTap tell whether the voice assistant is on screen, so pressing the button again closes it with Back instead of starting a new request. It only checks which app each on-screen window belongs to.</string>
+  <string name="root_available">AssistTap: root available, fast mode</string>
+  <string name="root_unavailable">AssistTap: root not available, standard mode</string>
 </resources>

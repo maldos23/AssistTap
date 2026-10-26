@@ -13,8 +13,8 @@ android {
         applicationId = "com.example.assisttap"
         minSdk = 26
         targetSdk = 35
-        versionCode = 3
-        versionName = "1.1.1"
+        versionCode = 4
+        versionName = "1.2.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -105,7 +105,7 @@ tasks.withType<Test>().configureEach {
 // Coverage gate: >= 80 % line coverage on the pure decision logic.
 tasks.register<JacocoCoverageVerification>("verifyResolverCoverage") {
     group = "verification"
-    description = "Fails when AssistantIntentResolver/IntentCandidates/AssistantToggle line coverage is below 80 %."
+    description = "Fails when line coverage of the decision classes (resolver, candidates, toggle, root) is below 80 %."
     dependsOn("testDebugUnitTest")
     classDirectories.setFrom(
         fileTree(layout.buildDirectory.dir("intermediates/built_in_kotlinc/debug/compileDebugKotlin/classes")) {
@@ -113,6 +113,9 @@ tasks.register<JacocoCoverageVerification>("verifyResolverCoverage") {
                 "**/AssistantIntentResolver*.class",
                 "**/IntentCandidates*.class",
                 "**/AssistantToggle*.class",
+                // Not RootAssistantKt: the real `su` runner only runs on a device.
+                "**/RootAssistant.class",
+                "**/RootAssistant\$*.class",
             )
         },
     )

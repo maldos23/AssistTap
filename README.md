@@ -60,6 +60,20 @@ nothing anywhere.
 In exact mode, a second press within 1.5 s of opening is ignored while the assistant is still appearing, so it never
 starts twice.
 
+## Root mode (faster)
+
+On a rooted device (Magisk, KernelSU, SuperSU) AssistTap opens and closes the assistant through the system's own
+assistant path (`cmd voiceinteraction show/hide`, the same one a hardware assist button uses) instead of an app intent.
+Measured on an emulator: the assistant shows 0.5 s sooner warm and 0.9 s sooner cold, and closing works in every mode,
+including the overlay that "go home" cannot close.
+
+- The first press checks for root in the background without delaying that press, then shows
+  *AssistTap: root available, fast mode* or *AssistTap: root not available, standard mode* (also logged under the
+  `AssistTap` tag). Grant the root prompt when it appears.
+- The answer is kept until AssistTap is updated or reinstalled; to check again sooner, clear AssistTap's storage.
+- Needs Android 11+ and a default digital assistant. If a root command fails, that press falls back to standard mode.
+- An emulator's built-in `su` only works for `adb shell`, not for apps, so emulators report "not available".
+
 ## Troubleshooting
 
 | Symptom | Fix |

@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.0] - 2026-10-26
+
+### Added
+
+- Root mode: on rooted devices the assistant opens and closes through `cmd voiceinteraction show/hide`, about
+  0.5-0.9 s faster than the intent, and closes in every mode. Root is checked once in the background and the
+  result is shown in a toast; without root nothing changes.
+
 ## [1.1.1] - 2026-10-26
 
 ### Fixed
