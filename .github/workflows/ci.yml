@@ -114,7 +114,7 @@ jobs:
         run: |
           ./gradlew assembleRelease
           mv app/build/outputs/apk/release/app-release.apk "AssistTap-${GITHUB_REF_NAME}.apk"
-      - uses: softprops/action-gh-release@v2
+      - uses: softprops/action-gh-release@v3
         with:
           files: AssistTap-${{ github.ref_name }}.apk
           generate_release_notes: true
