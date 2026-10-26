@@ -1,6 +1,5 @@
 plugins {
     alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlin.android)
     alias(libs.plugins.ktlint)
     alias(libs.plugins.detekt)
     jacoco
@@ -109,7 +108,7 @@ tasks.register<JacocoCoverageVerification>("verifyResolverCoverage") {
     description = "Fails when AssistantIntentResolver/IntentCandidates line coverage is below 80 %."
     dependsOn("testDebugUnitTest")
     classDirectories.setFrom(
-        fileTree(layout.buildDirectory.dir("tmp/kotlin-classes/debug")) {
+        fileTree(layout.buildDirectory.dir("intermediates/built_in_kotlinc/debug/compileDebugKotlin/classes")) {
             include("**/AssistantIntentResolver*.class", "**/IntentCandidates*.class")
         },
     )
@@ -117,6 +116,11 @@ tasks.register<JacocoCoverageVerification>("verifyResolverCoverage") {
     executionData.setFrom(
         layout.buildDirectory.file("outputs/unit_test_code_coverage/debugUnitTest/testDebugUnitTest.exec"),
     )
+    // Never pass vacuously: Gradle skips this task without execution data, and an empty class set has 0/0 lines.
+    setOnlyIf { true }
+    doFirst {
+        check(!classDirectories.asFileTree.isEmpty) { "No classes found for the coverage gate; check the class path." }
+    }
     violationRules {
         rule {
             limit {
