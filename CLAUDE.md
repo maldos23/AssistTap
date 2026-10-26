@@ -1,7 +1,7 @@
 # CLAUDE.md
 
 AssistTap: invisible Android app that opens the default voice assistant and finishes. Kotlin, minSdk 26,
-target/compileSdk 35, AGP 8.13, Gradle 8.13, JDK 17+.
+target/compileSdk 35, AGP 9 (built-in Kotlin, no `kotlin-android` plugin), Gradle 9.8, JDK 17+.
 
 ## Commands
 

@@ -56,5 +56,10 @@ flowchart TD
   they run on the JUnit Platform through `junit-vintage-engine`.
 - **Coverage gate** (`verifyResolverCoverage`) measures only `AssistantIntentResolver` and `IntentCandidates`, as the
   plan requires; `LaunchActivity` is covered by Robolectric tests but not gated.
+- **AGP 9 with built-in Kotlin.** Gradle 9.6+ removed an internal API that AGP 8.x needs, so the Gradle 9 wrapper
+  update required AGP 9. AGP 9 compiles Kotlin itself, so the `org.jetbrains.kotlin.android` plugin is gone and the
+  Kotlin version follows AGP.
+- **The coverage gate cannot pass vacuously.** It fails if it finds no classes (e.g. the compiler output path moves,
+  as it did with AGP 9) or no execution data.
 - **No splash build flag yet.** The plan lists it as an optional workaround for head units that block invisible apps;
   it will be added when a user reports such a unit.
