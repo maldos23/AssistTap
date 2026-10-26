@@ -1,0 +1,13 @@
+# Overrides on top of detekt's default config (buildUponDefaultConfig = true).
+build:
+  maxIssues: 0
+
+style:
+  MagicNumber:
+    excludes: ['**/test/**', '**/androidTest/**', '**/*.kts']
+  WildcardImport:
+    active: true
+
+complexity:
+  TooManyFunctions:
+    excludes: ['**/test/**', '**/androidTest/**']
