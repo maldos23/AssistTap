@@ -20,7 +20,8 @@ target/compileSdk 35, AGP 9 (built-in Kotlin, no `kotlin-android` plugin), Gradl
 - Everything in English: code, comments, commits, docs.
 - Conventional Commits; update `CHANGELOG.md` under `Unreleased`.
 - No runtime dependencies, no requested permissions, no network. Test-only dependencies go in `gradle/libs.versions.toml`.
-- Keep `LaunchActivity` thin; put decisions in `AssistantIntentResolver` / `IntentCandidates` / `AssistantToggle`.
+- Keep `LaunchActivity` thin; put decisions in `AssistantIntentResolver` / `IntentCandidates` / `AssistantToggle` / `RootAssistant`.
+- Root mode is optional too: without root (or when a root command fails) behaviour must match standard mode.
 - `AssistantWatcherService` is opt-in; every feature must keep working when it is disabled.
 - KDoc on every public class and function.
 - Record non-obvious decisions in `docs/ARCHITECTURE.md`.
