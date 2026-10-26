@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.1] - 2026-10-26
+
+### Fixed
+
+- With the service: presses were slow or misread when another app was busy, because the service read every
+  window's content. It now tracks windows from events.
+- With the service: a press up to 3 s after opening was ignored even if the assistant never appeared; now 1.5 s.
+- Without the service: a press up to 10 s after opening went home even if the assistant had already closed; now 5 s.
+
 ## [1.1.0] - 2026-10-25
 
 ### Added

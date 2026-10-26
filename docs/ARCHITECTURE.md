@@ -40,10 +40,10 @@ flowchart TD
     L[Launch] --> W{Watcher service enabled?}
     W -- yes --> V{Assistant window on screen?}
     V -- yes --> B[Global Back: close, return to previous app]
-    V -- no --> G{Opened < 3 s ago?}
+    V -- no --> G{Opened < 1.5 s ago?}
     G -- yes --> N[Do nothing: still appearing]
     G -- no --> O[Open assistant, store time]
-    W -- no --> R{Opened < 10 s ago?}
+    W -- no --> R{Opened < 5 s ago?}
     R -- yes --> H[Start HOME: closes the overlay]
     R -- no --> O
 ```
@@ -86,9 +86,16 @@ flowchart TD
   (`FragmentHostDefaultActivity`) or as a `VoiceInteractionSession` window. A HOME intent closes the first but not the
   second; a global Back closes both and returns to the previous app. Launching a no-UI activity closes neither.
   `ACTION_CLOSE_SYSTEM_DIALOGS` is blocked for apps targeting Android 12+.
-- **3 s opening grace in exact mode.** The assistant takes a moment to appear (9-11 s on a software-rendered emulator,
-  about 1-2 s on real hardware); a second press in that gap would otherwise start it twice. Both durations are
-  constants in `AssistantToggle`.
+- **Short windows: 1.5 s grace with the service, 5 s without.** v1.1.0 used 3 s and 10 s. The 3 s grace silently
+  swallowed presses when the assistant failed to appear; 1.5 s only debounces a double tap. An unattended overlay
+  closes itself after about 10 s (measured), and often sooner after answering, so a 10 s window sent people home when
+  they meant to open it. Both are constants in `AssistantToggle`.
+- **The service never reads window content.** v1.1.0 called `AccessibilityWindowInfo.getRoot()` for every window on
+  each press: a synchronous IPC into every on-screen app on our main thread, which waits up to the accessibility
+  timeout when an app is busy and reads as "not showing" when it returns `null`. The service now records each
+  window's package from `TYPE_WINDOW_STATE_CHANGED` events and only asks system_server which window ids are live.
+- **`ACTION_VOICE_COMMAND` stays first.** `ACTION_ASSIST` appears faster (0.3-1.1 s vs 1.5-3.5 s on the emulator) but
+  opens the Google search app instead of listening.
 - **The time is `SystemClock.elapsedRealtime()` in `SharedPreferences`.** It is immune to wall-clock changes; a value
   from before a reboot is larger than "now" and is ignored.
 - **No splash build flag yet.** The plan lists it as an optional workaround for head units that block invisible apps;

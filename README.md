@@ -50,14 +50,14 @@ normal apps see other apps' windows, so there are two modes:
 | Mode | Setup | How it decides | How it closes |
 |---|---|---|---|
 | **Exact (recommended)** | Enable the AssistTap service once (below) | Checks whether the assistant is actually on screen | Back, so you return to the app you were in (e.g. Maps) |
-| **Time-based (default)** | None | A launch within 10 s of opening it means "close" | Goes to the home screen |
+| **Time-based (default)** | None | A launch within 5 s of opening it means "close" | Goes to the home screen |
 
 To enable exact mode: *Settings → Accessibility → Installed apps (or Downloaded apps) → AssistTap: close assistant on
 second press → On*. On Android 13+, if the switch is greyed out, first open *Settings → Apps → Assistant → ⋮ → Allow
-restricted settings*. The service reads only the package name of each on-screen window; it reads no content and sends
+restricted settings*. The service reads only the package name of each window as it appears; it reads no content and sends
 nothing anywhere.
 
-In exact mode, a second press within 3 s of opening is ignored while the assistant is still appearing, so it never
+In exact mode, a second press within 1.5 s of opening is ignored while the assistant is still appearing, so it never
 starts twice.
 
 ## Troubleshooting
@@ -68,7 +68,7 @@ starts twice.
 | Gemini opens instead of Google Assistant | Expected: `ACTION_VOICE_COMMAND` opens whichever assistant is the device default. Change it in the default-apps settings. |
 | Nothing happens on a head unit | Some head units block apps without visible UI. Open an issue with your unit model; see "Known caveats". |
 | Second press goes to the home screen instead of back to my app | Enable exact mode (see "Press again to close"). |
-| Second press does not close the assistant | In time-based mode only presses within 10 s close it, and some assistant overlays ignore the home screen; enable exact mode. |
+| Second press does not close the assistant | In time-based mode only presses within 5 s close it, and some assistant overlays ignore the home screen; enable exact mode. |
 | The app is missing from the head unit's app picker | Reboot the head unit after installing; some pickers cache the app list. |
 
 ## Known caveats
